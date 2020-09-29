@@ -1,0 +1,75 @@
+---
+title: "hierarchical"
+author: "Paul Apivat Hanvongse"
+date: "9/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Dendrogram from Nested Data Frame
+
+```{r}
+# Libraries
+library(ggraph)
+library(igraph)
+library(tidyverse)
+
+# Load Data
+df <- read_csv("AB_NYC_2019.csv")
+head(df)
+```
+
+## Wrangle Data
+
+Select necessary columns from Airbnb dataset that have nested relationships. I will choose neighbourhood and neighbourhood_group. 
+
+```{r, echo=FALSE}
+
+# create nested dataframe from original airbnb df
+nested_df <- df %>%
+    select(neighbourhood_group, neighbourhood) %>%
+    mutate(city = 'New York City') %>%
+    select(city, everything()) %>%
+    group_by(city, neighbourhood_group, neighbourhood) %>%
+    tally(sort = TRUE) %>%
+    select(-n) %>%
+    rename(
+        level1 = city,
+        level2 = neighbourhood_group,
+        level3 = neighbourhood
+    )
+
+# create edgelist
+edges_level1_2 <- nested_df %>% select(level1, level2) %>% unique %>% rename(from=level1, to=level2)
+edges_level2_3 <- nested_df %>% select(level2, level3) %>% unique %>% rename(from=level2, to=level3)
+
+edge_list=rbind(edges_level1_2, edges_level2_3)
+```
+
+## Visualize Dendrogram 
+
+
+```{r, echo=FALSE}
+
+# Create column of NYC boroughs (n = 226) edge_list2
+edge_list2 <- edge_list
+    
+edge_list2$from[1] <- "Brooklyn"
+edge_list2$from[2] <- "Manhattan"
+edge_list2$from[3] <- "Queens"
+edge_list2$from[4] <- "Bronx"
+edge_list2$from[5] <- "Staten Island"
+
+# use graph_from_data_frame() function from igraph library
+mygraph <- graph_from_data_frame( edge_list )
+
+ggraph(mygraph, layout = 'dendrogram', circular = FALSE) + 
+    geom_edge_diagonal(aes(edge_colour = edge_list2$from)) +
+    geom_node_text(aes(label = name, angle = 85), hjust = 1.1) +
+    geom_node_point() +
+    expand_limits(y=c(-1,1)) + 
+    theme_void()
+```
