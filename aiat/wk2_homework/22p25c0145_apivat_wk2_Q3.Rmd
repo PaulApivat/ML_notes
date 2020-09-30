@@ -78,7 +78,7 @@ ggraph(mygraph, layout = 'dendrogram', circular = FALSE) +
 ## Dendrogram from Matrix Clustering
 
 ```{r}
-# create a matrix
+# Create a Matrix (limit to 100 rows)
 
 selected_df <- df %>%
     select(host_id, price, minimum_nights, number_of_reviews, reviews_per_month, calculated_host_listings_count, availability_365) %>%
@@ -92,8 +92,14 @@ selected_df <- df %>%
     ) %>%
     head(100)
 
+# Euclidean Distance
+euclidean <- dist(selected_df[ , c(3:4)], diag = TRUE)
 
+# Hierarchical Clustering with hclust
+hc <- hclust(euclidean)
 
+# Plot hierarchical cluster
+plot(hc)
 
 ```
 
