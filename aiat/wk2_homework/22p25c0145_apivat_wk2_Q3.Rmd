@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Dendrogram from Nested Data Frame
+## Dendrogram from Hierarchical Data 
 
 ```{r}
 # Libraries
@@ -73,3 +73,27 @@ ggraph(mygraph, layout = 'dendrogram', circular = FALSE) +
     expand_limits(y=c(-1,1)) + 
     theme_void()
 ```
+
+
+## Dendrogram from Matrix Clustering
+
+```{r}
+# create a matrix
+
+selected_df <- df %>%
+    select(host_id, price, minimum_nights, number_of_reviews, reviews_per_month, calculated_host_listings_count, availability_365) %>%
+    group_by(host_id) %>%
+    summarize(
+        host_id = unique(host_id),
+        mean_price = mean(price),
+        mean_minium_nights = mean(minimum_nights),
+        mean_umber_of_reviews = mean(number_of_reviews),
+        mean_calculated_host_listings_count = mean(calculated_host_listings_count)
+    )
+
+
+
+
+```
+
+
