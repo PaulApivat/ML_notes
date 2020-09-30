@@ -68,7 +68,7 @@ mygraph <- graph_from_data_frame( edge_list )
 
 ggraph(mygraph, layout = 'dendrogram', circular = FALSE) + 
     geom_edge_diagonal(aes(edge_colour = edge_list2$from)) +
-    geom_node_text(aes(label = name, angle = 85), hjust = 1.1) +
+    geom_node_text(aes(label = name, angle = 60), hjust = 1.1) +
     geom_node_point() +
     expand_limits(y=c(-1,1)) + 
     theme_void()
@@ -89,7 +89,8 @@ selected_df <- df %>%
         mean_minium_nights = mean(minimum_nights),
         mean_umber_of_reviews = mean(number_of_reviews),
         mean_calculated_host_listings_count = mean(calculated_host_listings_count)
-    )
+    ) %>%
+    head(100)
 
 
 
