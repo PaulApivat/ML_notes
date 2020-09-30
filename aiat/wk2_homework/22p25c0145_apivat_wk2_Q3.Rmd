@@ -1,6 +1,6 @@
 ---
-title: "hierarchical"
-author: "Paul Apivat Hanvongse"
+title: "hierarchical data"
+author: "22p25c0145 Apivat Hanvongse"
 date: "9/29/2020"
 output: html_document
 ---
