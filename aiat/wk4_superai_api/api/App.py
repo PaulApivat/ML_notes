@@ -10,6 +10,7 @@ CORS(app)
 def helloworld():
     return 'Helloworld'
 
+# Example request: http://localhost:5000/area?w=50&h=3
 @app.route('/area', methods=['GET'])
 @cross_origin()
 def area():
@@ -18,6 +19,7 @@ def area():
     return str(w * h)
 
 
+# Example request: http://localhost:5000/bmi?w=50&h=180
 @app.route('/bmi', methods=['GET'])
 @cross_origin()
 def bmi():
@@ -27,7 +29,7 @@ def bmi():
     bmi = weight/(height**2)
     return str(bmi)
 
-
+# Demo in Postman (SuperAI Collections): localhost:5000/iris
 @app.route('/iris', methods=['POST'])
 @cross_origin()
 def predict_species():
