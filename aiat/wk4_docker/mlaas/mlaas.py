@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
+import os
 import joblib
 import numpy as np 
 
@@ -8,7 +9,7 @@ CORS(app)
 
 @app.route('/')
 def helloworld():
-    return 'Helloworld'
+    return 'Hello world: Machine Learning as a Service'
 
 # Example request: http://localhost:5000/area?w=50&h=3
 @app.route('/area', methods=['GET'])
@@ -38,11 +39,11 @@ def predict_species():
     inputs = np.array(req.split(','), dtype=np.float32).reshape(1,-1)
     predict_target = model.predict(inputs)
     if predict_target == 0:
-        return 'Setosa'
+        return 'Setosa Flower'
     elif predict_target == 1:
-        return 'Versicolor'
+        return 'Versicolor Flower'
     else:
-        return 'Virginica'
+        return 'Virginica Flower'
     
 
 if __name__ == '__main__':
