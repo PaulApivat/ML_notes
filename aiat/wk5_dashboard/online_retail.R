@@ -77,6 +77,7 @@ retail2 %>%
 
 # product StockCode for UK
 # need to remove legend (too many observations)
+# pie chart - not informative
 retail2 %>%
     select(StockCode, Country) %>%
     group_by(StockCode, Country) %>%
@@ -87,6 +88,43 @@ retail2 %>%
     coord_polar("y", start = 0) +
     theme(legend.position = "none")
 
+
+retail2 %>%
+    group_by(InvoiceNo) %>%
+    tally(sort = TRUE)
+
+# top 10 Product Descriptions  by frequency across all countries
+retail2 %>%
+    group_by(Description) %>%
+    tally(sort = TRUE) %>%
+    head(10)
+
+# top 10 products by revenue - across 10 countries
+retail2 %>%
+    select(Description, Quantity, UnitPrice) %>%
+    mutate(
+        Total_Revenue = Quantity * UnitPrice
+    ) %>%
+    group_by(Description) %>%
+    summarise(
+        Sum_Revenue = sum(Total_Revenue)
+    ) %>%
+    arrange(desc(Sum_Revenue)) %>%
+    head(10) %>%
+    ggplot(aes(x = reorder(Description, Sum_Revenue), y = Sum_Revenue, fill = Description)) +
+    geom_col() +
+    scale_y_continuous(labels = scales::dollar_format()) +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none"
+        ) +
+    labs(
+        title = "Top 10 Product by Revenue",
+        y = "Total Revenue",
+        x = "Product Descriptions"
+    )
+    
+    
 
 
 
