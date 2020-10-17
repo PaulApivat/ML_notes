@@ -71,9 +71,23 @@ retail2 %>%
     ungroup() %>%
     arrange(desc(Total_Revenue)) %>%
     filter(Country != 'United Kingdom') %>%
-    ggplot(aes(x = reorder(Country, Total_Revenue), y = Total_Revenue, fill = Total_Revenue)) +
+    ggplot(aes(x = reorder(Country, Total_Revenue), y = Total_Revenue, fill = Country)) +
     geom_col() +
-    coord_flip() 
+    coord_flip() +
+    scale_y_continuous(labels = scales::dollar_format()) +
+    theme_classic() +
+    theme(
+        legend.position = "none"
+    ) +
+    labs(
+        y = 'Total Revenue',
+        x = 'Countries',
+        title = 'Top Revenue Generating Countries',
+        subtitle = 'Not including the United Kingdom'
+    ) 
+
+
+
 
 # product StockCode for UK
 # need to remove legend (too many observations)
@@ -114,6 +128,7 @@ retail2 %>%
     ggplot(aes(x = reorder(Description, Sum_Revenue), y = Sum_Revenue, fill = Description)) +
     geom_col() +
     scale_y_continuous(labels = scales::dollar_format()) +
+    theme_classic() +
     theme(
         axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none"
@@ -124,7 +139,24 @@ retail2 %>%
         x = "Product Descriptions"
     )
     
-    
 
+# DOTCOM POSTAGE sales over time
+library(lubridate)
 
+retail2 %>%
+    select(Description, Quantity, UnitPrice, InvoiceDate) %>%
+    mutate(
+        Revenue = Quantity * UnitPrice,
+        InvoiceDate = InvoiceDate %>% mdy_hm()
+    ) %>%
+    filter(Description == 'DOTCOM POSTAGE') %>%
+    ggplot(aes(x = InvoiceDate, y = Revenue)) + 
+    geom_line() +
+    theme_classic() +
+    scale_y_continuous(labels = scales::dollar_format()) +
+    labs(
+        x = "Date",
+        title = "Dotcom Postage Revenue",
+        subtitle = "12/1/2010 - 12/9/2011"
+    )
 
