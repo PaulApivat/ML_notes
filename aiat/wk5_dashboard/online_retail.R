@@ -60,7 +60,7 @@ retail2 %>%
     
 
 # Bar chart total revenue by country
-retail2 %>%
+p1 <- retail2 %>%
     mutate(
         Revenue = Quantity * UnitPrice
     ) %>%
@@ -114,7 +114,7 @@ retail2 %>%
     head(10)
 
 # top 10 products by revenue - across 10 countries
-retail2 %>%
+p2 <- retail2 %>%
     select(Description, Quantity, UnitPrice) %>%
     mutate(
         Total_Revenue = Quantity * UnitPrice
@@ -143,7 +143,7 @@ retail2 %>%
 # DOTCOM POSTAGE sales over time
 library(lubridate)
 
-retail2 %>%
+p3 <- retail2 %>%
     select(Description, Quantity, UnitPrice, InvoiceDate) %>%
     mutate(
         Revenue = Quantity * UnitPrice,
@@ -156,12 +156,12 @@ retail2 %>%
     scale_y_continuous(labels = scales::dollar_format()) +
     labs(
         x = "Date",
-        title = "Dotcom Postage Revenue",
+        title = "Best Selling Product: Dotcom Postage Revenue",
         subtitle = "12/1/2010 - 12/9/2011"
     )
 
 # Spaceboy Lunch Box Revenue facet by country
-retail2 %>%
+p4 <- retail2 %>%
     select(Description, Quantity, UnitPrice, InvoiceDate, Country) %>%
     mutate(
         Revenue = Quantity * UnitPrice,
@@ -179,6 +179,39 @@ retail2 %>%
         subtitle = "Time Period: 12/1/2010 - 12/9/2011"
     )
 
+# Top revenue generating products, over 5000, by countries outside of UK
+p5 <- retail2 %>%
+    select(Description, Quantity, UnitPrice, Country) %>%
+    mutate(
+        Total_Revenue = Quantity * UnitPrice
+    ) %>%
+    group_by(Country, Description) %>%
+    summarise(
+        Sum_Revenue = sum(Total_Revenue)
+    ) %>%
+    arrange(desc(Sum_Revenue)) %>% 
+    filter(Country != 'United Kingdom') %>%
+    filter(Sum_Revenue > 5000) %>% 
+    ggplot(aes(x = Description, y = Sum_Revenue, fill = Description)) + 
+    geom_col() +
+    facet_wrap(~Country) +
+    theme_classic() +
+    theme(
+        axis.text.x = element_text(angle = 90, hjust = 1),
+        legend.position = 'none'
+    ) +
+    scale_y_continuous(labels = scales::dollar_format()) +
+    coord_flip() +
+    labs(
+        x = 'Products',
+        y = 'Total Revenue',
+        title = 'Top Revenue Generating Products Outside of the UK',
+        subtitle = 'Grossing over $5,000'
+    )
+    
 
 
+# dashboard creation
+library(patchwork)
 
+p5 + (p1 / (p2 + p3))
