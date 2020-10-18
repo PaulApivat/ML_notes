@@ -160,3 +160,25 @@ retail2 %>%
         subtitle = "12/1/2010 - 12/9/2011"
     )
 
+# Spaceboy Lunch Box Revenue facet by country
+retail2 %>%
+    select(Description, Quantity, UnitPrice, InvoiceDate, Country) %>%
+    mutate(
+        Revenue = Quantity * UnitPrice,
+        InvoiceDate = InvoiceDate %>% mdy_hm()
+    ) %>% 
+    filter(Description == 'SPACEBOY LUNCH BOX') %>% 
+    ggplot(aes(x = InvoiceDate, y = Revenue, group = Country)) +
+    geom_line() +
+    theme_classic() +
+    scale_y_continuous(labels = scales::dollar_format()) +
+    facet_wrap(~Country) +
+    labs(
+        x = "Date",
+        title = "Spaceboy Lunch Box Revenue by Country",
+        subtitle = "Time Period: 12/1/2010 - 12/9/2011"
+    )
+
+
+
+
